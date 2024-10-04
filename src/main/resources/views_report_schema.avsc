@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "ViewsReportDto",
+  "namespace": "com.jvo.viewlogreporting.dto",
+  "fields": [
+    { "name": "campaignId", "type": "int" },
+    { "name": "networkId", "type": "int" },
+    { "name": "minuteTimestamp", "type": { "type": "string", "logicalType": "timestamp-millis" }},
+    { "name": "avgDuration", "type": "double" },
+    { "name": "viewCount", "type": "int" }
+  ]
+}

@@ -1,0 +1,51 @@
+spring:
+  kafka:
+    topics:
+      view-logs-topic: 'view-logs'
+      campaign-data-topic: "campaign-data"
+      views-report: "views-report"
+      enriched-view-logs: "enriched-view-logs"
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    streams:
+      application-id: view-logs-reporting
+      properties:
+        commit.interval.ms: 1000
+        state.dir: /tmp/kafka-streams
+        num.stream.threads: ${STREAM_THREADS_NUMBER:1}
+
+    consumer:
+      bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      group-id: view-log-reporting
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "java.util, java.lang, com.jvo.viewlogreporting.dto, com.jvo.viewlogreporting.dto.*, com.jvo.viewlogkafkaproducer.dto, com.jvo.viewlogkafkaproducer.dto.*, com.jvo.viewlogkafkaproducer.dto.ViewLogDto"
+
+campaign:
+  data:
+    csv:
+      path: campaigns.csv
+
+output:
+  path: ${OUTPUT_PATH}
+
+logging:
+  level:
+    org.springframework: ERROR
+    com.jvo.viewlogkafkaproducer: ERROR
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+  file:
+    name: view_logs_producer.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 10
